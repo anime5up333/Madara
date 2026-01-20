@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معرض أعمالي</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://4kwallpapers.com/images/walls/thumbs_3t/18381.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 85%;
+            max-width: 320px;
+            height: 100vh;
+            background-color: #111;
+            transform: translateX(100%);
+            transition: transform 0.3s ease, visibility 0.3s;
+            visibility: hidden;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .navbar.open {
+            transform: translateX(0);
+            visibility: visible;
+            transition: transform 0.3s ease, visibility 0s;
+        }
+        .navbar .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .navbar-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .close-btn {
+            display: none;
+        }
+        .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex-grow: 1;
+        }
+        .nav-links li {
+            margin: 15px 0;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 1em;
+            display: block;
+            text-align: center;
+        }
+        .nav-links a:hover {
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.3), rgba(138, 43, 226, 0.3));
+            border-color: rgba(255, 105, 180, 0.5);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+        .hamburger {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            z-index: 1001;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, background-color 0.3s;
+        }
+        .hamburger:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(0, 0, 0, 1);
+        }
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #fff;
+            margin: 3px 0;
+            transition: all 0.3s ease-in-out;
+            display: block;
+            border-radius: 2px;
+        }
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        .overlay.active {
+            display: block;
+        }
+        .hero {
+            padding: 100px 20px 50px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 25px;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .section {
+            padding: 50px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        .skills {
+            flex: 1;
+            min-width: 300px;
+        }
+        .skill {
+            margin-bottom: 15px;
+        }
+        .skill span {
+            color: #007bff;
+        }
+        .skill-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .skill-progress {
+            background: linear-gradient(90deg, #ff0000, #ff4444);
+            height: 100%;
+            border-radius: 5px;
+            width: 0;
+            transition: width 2s ease-in-out;
+        }
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+        .channel-item a {
+            display: block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-decoration: none;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .channel-item a:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+        .channel-item h3 {
+            margin: 0 0 10px;
+            font-size: 1.2em;
+        }
+        .channel-item p {
+            margin: 0;
+            font-size: 0.9em;
+        }
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+        .portfolio-item a {
+            display: block;
+            background: linear-gradient(135deg, #8B0000, #DC143C);
+            color: white;
+            padding: 20px;
+            text-decoration: none;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .portfolio-item a:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+        .portfolio-item h3 {
+            margin: 0 0 10px;
+            font-size: 1.2em;
+        }
+        .portfolio-item p {
+            margin: 0;
+            font-size: 0.9em;
+        }
+        .contact-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background: white;
+            color: black;
+        }
+        .contact-form button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .contact-form button:hover {
+            transform: translateY(-2px);
+        }
+        .donations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+        .donation-item {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: black;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .donation-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+        .donation-item h3 {
+            margin: 0 0 15px;
+            font-size: 1.3em;
+        }
+        .donation-address {
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .donation-address:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+        .donation-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF69B4, #FF1493);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-top: 10px;
+            transition: transform 0.3s;
+        }
+        .donation-link:hover {
+            transform: translateY(-2px);
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            margin: 5% auto;
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: black;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        .modal-header h2 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .modal-body {
+            padding: 30px;
+        }
+        .close {
+            color: black;
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close:hover {
+            color: #333;
+        }
+        #bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            pointer-events: none;
+        }
+        #change-bg-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+            font-size: 24px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, background-color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #change-bg-btn:hover {
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 1);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            .section-title {
+                font-size: 2em;
+            }
+            .channels-grid {
+                grid-template-columns: 1fr;
+            }
+            .donations-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+            .modal-body {
+                padding: 20px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Background Overlay for Transition -->
+    <div id="bg-overlay"></div>
+
+    <!-- Change Background Button -->
+    <button id="change-bg-btn" onclick="changeBackground()" title="تغيير الخلفية">🎨</button>
+
+    <!-- Hamburger Menu -->
+    <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" onclick="closeMenu()"></div>
+
+    <!-- القائمة الجانبية -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-header">
+                <div class="logo">معرض أعمالي</div>
+                <span class="close-btn" onclick="closeMenu()">&times;</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" onclick="closeMenu()">الرئيسية</a></li>
+                <li><a href="#about" onclick="closeMenu()">عني</a></li>
+                <li><a href="friends.html" onclick="closeMenu()">قنوات صديقة</a></li>
+                <li><a href="#channels" onclick="closeMenu()">قنواتي</a></li>
+                <li><a href="#portfolio" onclick="closeMenu()">أعمالي</a></li>
+                <li><a href="#contact" onclick="closeMenu()">تواصل معي</a></li>
+                <li><a href="#" onclick="openDonationsModal(); closeMenu()">التبرعات</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- القسم الرئيسي -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>مرحباً، أنا [Madara]</h1>
+            <p> يوزري علي التليجرام @bc_7t<p>
+            <a href="#channels" class="btn">شاهد أعمالي</a>
+        </div>
+    </section>
+
+    <!-- قسم عني -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">عني</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>أنا صانع محتوى متخصص في نشر الأنمي والمانهوا 🎬📚</p>
+                    <p>أهتم بتقديم أحدث الإصدارات، المقاطع المميزة، والاقتباسات الشيّقة لعشّاق الأنمي والقصص المصوّرة.</p>
+                    <p>أسعى دائمًا لاختيار محتوى ممتع وعالي الجودة يناسب الذوق العام ويواكب الترند.</p>
+                    <p>إذا تحب الأنمي والمانهوا، هنا راح تلاگي كل جديد بشكل مستمر 🔥✨</p>
+                </div>
+                <div class="skills">
+                    <h3>المهارات</h3>
+                    <div class="skill">
+                        <span>إنشاء المحتوى</span>
+                        <div class="skill-bar"><div class="skill-progress" data-width="95%"></div></div>
+                        <span class="skill-percentage">95%</span>
+                    </div>
+                    <div class="skill">
+                        <span>تصميم المانهوا</span>
+                        <div class="skill-bar"><div class="skill-progress" data-width="90%"></div></div>
+                        <span class="skill-percentage">90%</span>
+                    </div>
+                    <div class="skill">
+                        <span>نشر حلقات الانمي</span>
+                        <div class="skill-bar"><div class="skill-progress" data-width="92%"></div></div>
+                        <span class="skill-percentage">92%</span>
+                    </div>
+                    <div class="skill">
+                        <span>نشر الايديت و ميمز الانمي</span>
+                        <div class="skill-bar"><div class="skill-progress" data-width="88%"></div></div>
+                        <span class="skill-percentage">88%</span>
+                    </div>
+                    <div class="skill">
+                        <span>نشر فصول المانهوا و المانجا</span>
+                        <div class="skill-bar"><div class="skill-progress" data-width="85%"></div></div>
+                        <span class="skill-percentage">85%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم قنواتي -->
+    <section id="channels" class="channels">
+        <div class="container">
+            <h2 class="section-title">قنواتي على التليجرام</h2>
+            <div class="channels-grid">
+                <div class="channel-item">
+                    <a href="https://t.me/anime5up33" target="_blank">
+                        <h3>انمياتك</h3>
+                        <p>حلقات الانمي</p>
+                    </a>
+                </div>
+                <div class="channel-item">
+                    <a href="https://t.me/Anime_XI" target="_blank">
+                        <h3>اخبار الانمي</h3>
+                        <p>اخبار الانمي</p>
+                    </a>
+                </div>
+                <div class="channel-item">
+                    <a href="https://t.me/DubMX" target="_blank">
+                        <h3>عالم الانمي المدبلج</h3>
+                        <p>حلقات الانمي المدبلج</p>
+                    </a>
+                </div>
+                <div class="channel-item">
+                    <a href="https://t.me/anime_zp" target="_blank">
+                        <h3>عالم الانمي</h3>
+                        <p>ميمز انمي</p>
+                    </a>
+                </div>
+                <div class="channel-item">
+                    <a href="https://t.me/mangalek1" target="_blank">
+                        <h3>مانجاتك</h3>
+                        <p>مانجا و مانهوا</p>
+                    </a>
+                </div>
+                <div class="channel-item">
+                    <a href="https://t.me/IIFLT" target="_blank">
+                        <h3>افلام نتفليكس</h3>
+                        <p>افلام نتفليكس</p>
+                    </a>
+                </div>
+                <div class="channel-item">
+                    <a href="https://t.me/Animeatk8" target="_blank">
+                        <h3>معلوماتي علي التليجرام</h3>
+                        <p>معلومات شخصية</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الأعمال -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <h2 class="section-title">بوتاتي</h2>
+            <div class="portfolio-grid">
+                <div class="portfolio-item">
+                    <a href="https://t.me/Animeatk9_bot" target="_blank">
+                        <h3>𝗔𝗡𝗜𝗠𝗘 𝗕𝗢𝗧 | بوت انمي</h3>
+                        <p>بوت مختص في نشر جميع حلقات وافلام الانمي</p>
+                    </a>
+                </div>
+                <div class="portfolio-item">
+                    <a href="https://t.me/Mangatik9_bot" target="_blank">
+                        <h3>بوت مانجا | Manga Bot</h3>
+                        <p>بوت مختص في نشر جميع فصول المانهوا والمانجا</p>
+                    </a>
+                </div>
+                <div class="portfolio-item">
+                    <a href="https://t.me/Netflix9_bot" target="_blank">
+                        <h3>Movie Bot - بوت افلام</h3>
+                        <p>بوت مختص في نشر جميع افلام والمسلسلات</p>
+                    </a>
+                </div>
+                <div class="portfolio-item">
+                    <a href="https://t.me/BlackClover16bot" target="_blank">
+                        <h3>بوت بلاك كلوفر | Black Clover</h3>
+                        <p>بوت مختص في نشر جميع حلقات وافلام بلاك كلوفر</p>
+                    </a>
+                </div>
+                <div class="portfolio-item">
+                    <a href="https://t.me/onepiece5bot" target="_blank">
+                        <h3>بوت one piece | ون بيس</h3>
+                        <p>بوت مختص في نشر جميع حلقات وافلام ون بيس</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم التواصل -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">تواصل معي</h2>
+            <form class="contact-form" onsubmit="sendEmail('YW5pbWU1dXAzMzNAZ21haWwuY29t'); return false;">
+                <input type="text" name="name" placeholder="الاسم" required>
+                <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+                <textarea name="message" placeholder="رسالتك" rows="5" required></textarea>
+                <button type="submit" class="btn">إرسال</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- التذييل -->
+    <footer>
+        <p>&copy; 2026 جميع الحقوق محفوظة | YAHYA KHOUIDER</p>
+    </footer>
+
+    <!-- Donations Modal -->
+    <div id="donationsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeDonationsModal()">&times;</span>
+                <h2>التبرعات 💰</h2>
+            </div>
+            <div class="modal-body">
+                <div class="donations-grid">
+                    <div class="donation-item">
+                        <h3>USDT TRC20</h3>
+                        <div class="donation-address" onclick="copyToClipboard('TNnB8MDueqzAqbHejiWHnWzSsDU3vnrVtT')">
+                            TNnB8MDueqzAqbHejiWHnWzSsDU3vnrVtT
+                        </div>
+                    </div>
+                    <div class="donation-item">
+                        <h3>TON</h3>
+                        <div class="donation-address" onclick="copyToClipboard('EQD5mxRgCuRNLxKxeOjG6r14iSroLF5FtomPnet-sgP5xNJb')">
+                            EQD5mxRgCuRNLxKxeOjG6r14iSroLF5FtomPnet-sgP5xNJb
+                        </div>
+                    </div>
+                    <div class="donation-item">
+                        <h3>Ko-fi</h3>
+                        <a href="https://ko-fi.com/anime5up33" target="_blank" class="donation-link">
+                            تبرع عبر Ko-fi
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to toggle the side menu
+        function toggleMenu() {
+            const navbar = document.getElementById('navbar');
+            const overlay = document.querySelector('.overlay');
+            const hamburger = document.querySelector('.hamburger');
+            navbar.classList.toggle('open');
+            overlay.classList.toggle('active');
+            hamburger.classList.toggle('open');
+            document.body.style.overflow = navbar.classList.contains('open') ? 'hidden' : '';
+        }
+
+        // Function to close the side menu
+        function closeMenu() {
+            const navbar = document.getElementById('navbar');
+            const overlay = document.querySelector('.overlay');
+            const hamburger = document.querySelector('.hamburger');
+            navbar.classList.remove('open');
+            overlay.classList.remove('active');
+            hamburger.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Function to decode and navigate to encrypted links
+        function navigateTo(url) {
+            const decodedUrl = atob(url);
+            window.open(decodedUrl, '_blank');
+        }
+
+        // Function to handle mailto links
+        function sendEmail(encodedEmail) {
+            const email = atob(encodedEmail);
+            window.location.href = 'mailto:' + email;
+        }
+
+        // Function to copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('تم نسخ العنوان إلى الحافظة!');
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        // Function to open donations modal
+        function openDonationsModal() {
+            document.getElementById('donationsModal').style.display = 'block';
+        }
+
+        // Function to close donations modal
+        function closeDonationsModal() {
+            document.getElementById('donationsModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('donationsModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const skillProgresses = document.querySelectorAll('.skill-progress');
+            skillProgresses.forEach(progress => {
+                const width = progress.getAttribute('data-width');
+                setTimeout(() => {
+                    progress.style.width = width;
+                }, 500);
+            });
+
+            // Background images that change every hour
+            const backgrounds = [
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMTgzODEuanBn',
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMTkyNjcuanBn',
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMjQ0NzQuanBn',
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMjM2NDcuanBn',
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMjI3MTQuanBn',
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMjI1ODgucG5n',
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMjE0MTguanBn',
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMjAxODQuanBn',
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMjAwMjcucG5n',
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMTk3NjYuanBn',
+                'aHR0cHM6Ly80a3dhbGxwYXBlcnMuY29tL2ltYWdlcy93YWxscy90aHVtYnNfM3QvMTk3OTUuanBn'
+            ].map(b64 => atob(b64));
+
+            window.changeBackground = function() {
+                const backgroundIndex = Math.floor(Math.random() * backgrounds.length);
+                const newBgUrl = `url('${backgrounds[backgroundIndex]}')`;
+                const overlay = document.getElementById('bg-overlay');
+                
+                overlay.style.backgroundImage = newBgUrl;
+                overlay.style.opacity = '1';
+                
+                setTimeout(() => {
+                    document.body.style.backgroundImage = newBgUrl;
+                    overlay.style.opacity = '0';
+                }, 1000);
+            };
+
+            // Change background immediately
+            window.changeBackground();
+
+            // Change background every 5 minutes
+            setInterval(window.changeBackground, 5 * 60 * 1000); // 5 minutes in milliseconds
+        });
+    </script>
+</body>
+</html>

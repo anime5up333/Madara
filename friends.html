@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قنوات صديقة</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -264,11 +267,25 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                background-attachment: scroll;
+            }
             .container {
                 padding: 30px 20px;
             }
             .section-title {
                 font-size: 2em;
+            }
+            .countdown-container {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .countdown-item {
+                min-width: 45%;
+                padding: 10px;
+            }
+            .countdown-number {
+                font-size: 1.8em;
             }
         }
         /* Modal Styles */

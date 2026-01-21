@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>معرض أعمالي</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -180,11 +183,11 @@
         }
         .about-text {
             flex: 1;
-            min-width: 300px;
+            min-width: 250px;
         }
         .skills {
             flex: 1;
-            min-width: 300px;
+            min-width: 250px;
         }
         .skill {
             margin-bottom: 15px;
@@ -292,7 +295,7 @@
         }
         .donations-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             justify-content: center;
         }
@@ -476,11 +479,17 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                background-attachment: scroll;
+            }
             .hero h1 {
                 font-size: 2em;
             }
             .section-title {
                 font-size: 2em;
+            }
+            .about-text, .skills {
+                min-width: 100%;
             }
             .channels-grid {
                 grid-template-columns: 1fr;
@@ -494,6 +503,17 @@
             }
             .modal-body {
                 padding: 20px;
+            }
+            .countdown-container {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .countdown-item {
+                min-width: 45%;
+                padding: 10px;
+            }
+            .countdown-number {
+                font-size: 1.8em;
             }
         }
 

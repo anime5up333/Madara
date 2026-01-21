@@ -224,6 +224,44 @@
             transform: scale(1.1);
             background: rgba(0, 0, 0, 1);
         }
+        /* Countdown Timer Styles */
+        .dev-modal-header {
+            background: linear-gradient(135deg, #434343, #000000);
+            color: white;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        .dev-modal-header h2 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .countdown-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 80px;
+        }
+        .countdown-item span {
+            display: block;
+        }
+        .countdown-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        .countdown-label {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+        }
 
         @media (max-width: 768px) {
             .container {
@@ -232,6 +270,52 @@
             .section-title {
                 font-size: 2em;
             }
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            margin: 10% auto;
+            width: 95%;
+            max-width: 800px;
+        }
+        /* Payment Styles */
+        .donations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+        .donation-item {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: black;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .donation-item:hover {
+            transform: translateY(-5px);
+        }
+        .donation-address {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+            margin: 10px 0;
+            cursor: pointer;
         }
 
     </style>
@@ -264,9 +348,60 @@
             window.open(decodedUrl, '_blank');
         }
 
+        // Function to copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('تم نسخ العنوان إلى الحافظة!');
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
         // Function to open donations modal (placeholder, as modal is not in friends.html)
         function openDonationsModal() {
             alert('التبرعات متاحة في الصفحة الرئيسية');
+        }
+
+        // Function to close development modal
+        function closeDevModal() {
+            document.getElementById('devModal').style.display = 'none';
+        }
+
+        let countdownInterval;
+        // Function to start the countdown
+        function startCountdown() {
+            // Set the date we're counting down to (e.g., 30 days from now)
+            const launchDate = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
+
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            countdownInterval = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = launchDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("days").innerText = days;
+                document.getElementById("hours").innerText = hours;
+                document.getElementById("minutes").innerText = minutes;
+                document.getElementById("seconds").innerText = seconds;
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById("countdown").innerHTML = "<h3 style='width: 100%; text-align: center;'>تم الافتتاح!</h3>";
+                }
+            }, 1000);
+        }
+
+        // Function to show under development alert
+        function showUnderDevelopment() {
+            document.getElementById('devModal').style.display = 'block';
+            startCountdown();
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -304,6 +439,14 @@
 
             // Change background every 5 minutes
             setInterval(window.changeBackground, 5 * 60 * 1000); // 5 minutes in milliseconds
+
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                const devModal = document.getElementById('devModal');
+                if (event.target == devModal) {
+                    devModal.style.display = 'none';
+                }
+            }
         });
     </script>
 </head>
@@ -313,6 +456,56 @@
 
     <!-- Change Background Button -->
     <button id="change-bg-btn" onclick="changeBackground()" title="تغيير الخلفية">🎨</button>
+
+    <!-- Under Development Modal -->
+    <div id="devModal" class="modal">
+        <div class="modal-content">
+            <div class="dev-modal-header">
+                <span class="close" onclick="closeDevModal()">&times;</span>
+                <h2>لشراء القناة قيد التطوير 🛠️</h2>
+            </div>
+            <div class="modal-body" style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d); color: white; padding: 30px; border-radius: 0 0 20px 20px;">
+                <p style="text-align: center; font-size: 1.2em;">نعمل بجد لإطلاق لشراء القناة قريباً! ترقبوا الافتتاح.</p>
+                <h3 style="text-align: center; margin-top: 30px;">الوقت المتبقي للافتتاح:</h3>
+                <div id="countdown" class="countdown-container">
+                    <div class="countdown-item">
+                        <span id="days" class="countdown-number">0</span>
+                        <span class="countdown-label">أيام</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="hours" class="countdown-number">0</span>
+                        <span class="countdown-label">ساعات</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="minutes" class="countdown-number">0</span>
+                        <span class="countdown-label">دقائق</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="seconds" class="countdown-number">0</span>
+                        <span class="countdown-label">ثواني</span>
+                    </div>
+                </div>
+
+                <!-- Payment Methods Section -->
+                <div style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                    <h3 style="text-align: center; margin-bottom: 20px;">طرق الدفع المتاحة</h3>
+                    <div class="donations-grid">
+                        <div class="donation-item" style="background: linear-gradient(135deg, #003087, #009cde); color: white;">
+                            <h3>PayPal</h3>
+                            <p>للدفع المباشر</p>
+                            <button onclick="window.open('https://paypal.me/YOUR_USERNAME', '_blank')" style="background: white; color: #003087; border: none; padding: 10px 20px; border-radius: 20px; margin-top: 10px; cursor: pointer; font-weight: bold;">دفع الآن</button>
+                        </div>
+                        <div class="donation-item" style="background: linear-gradient(135deg, #26A17B, #161616); color: white;">
+                            <h3>USDT (TRC20)</h3>
+                            <div class="donation-address" onclick="copyToClipboard('TNnB8MDueqzAqbHejiWHnWzSsDU3vnrVtT')" style="background: rgba(0,0,0,0.5); color: white; font-size: 0.8em;">
+                                TNnB8MDueqzAqbHejiWHnWzSsDU3vnrVtT
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Hamburger Menu -->
     <div class="hamburger" onclick="toggleMenu()">
@@ -337,6 +530,7 @@
                 <li><a href="#" onclick="closeMenu()">قنوات صديقة</a></li>
                 <li><a href="index.html#channels" onclick="closeMenu()">قنواتي</a></li>
                 <li><a href="index.html#portfolio" onclick="closeMenu()">أعمالي</a></li>
+                <li><a href="#" onclick="showUnderDevelopment(); closeMenu()">لشراء القناة</a></li>
                 <li><a href="index.html#contact" onclick="closeMenu()">تواصل معي</a></li>
                 <li><a href="#" onclick="openDonationsModal(); closeMenu()">التبرعات</a></li>
             </ul>
